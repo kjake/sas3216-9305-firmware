@@ -91,8 +91,11 @@ python3 build_3216_clone_fw.py --oracle --p15-base 16i_P15.bin --p15-backup clon
 
 ## Credits & legal
 
-- Made possible by a community-shared known-good clone P15 backup — paying the
-  method forward.
+- This project exists because **[Nialpo](https://forums.truenas.com/u/nialpo)** made
+  and shared a firmware + BIOS backup of a working SAS3216 clone. That backup is the
+  known-good P15 reference the whole build validates against, byte for byte — no
+  backup, no oracle, no project. Thank you. The discussion that started it:
+  [TrueNAS forums](https://forums.truenas.com/t/help-finding-updated-firmware-for-avago-sas3216-9305-16i-hba-card/62254).
 - "LSI", "Broadcom", and "Avago" and the firmware are property of Broadcom Inc. This
   project is **not affiliated with or endorsed by Broadcom**. The build tool only
   modifies firmware you supply yourself. The prebuilt images in [`firmware/`](firmware/)

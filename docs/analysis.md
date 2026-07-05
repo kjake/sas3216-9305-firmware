@@ -36,9 +36,11 @@ combination, which is why both stock images fail.
 
 ## Diffing the images
 
-I had a known-good backup pulled from a working clone (P15, IT mode) and the stock
-Broadcom 9305-16i P15 image. Same size to the byte — 959,848 — and identical headers,
-down to the firmware version field. The difference is tiny:
+I had a known-good backup pulled from a working clone (P15, IT mode) — captured and
+shared by [Nialpo](https://forums.truenas.com/u/nialpo) on the
+[TrueNAS forums](https://forums.truenas.com/t/help-finding-updated-firmware-for-avago-sas3216-9305-16i-hba-card/62254) —
+and the stock Broadcom 9305-16i P15 image. Same size to the byte — 959,848 — and
+identical headers, down to the firmware version field. The difference is tiny:
 
 ```
 total differing bytes: 123 / 959848 (0.0128%)

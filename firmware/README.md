@@ -33,6 +33,11 @@ The **P15 files** are here as a reference and a rescue image. If a P16 build eve
 misbehaves on your card, the P15 image is a known-good fallback that's been running on
 these clones for a while.
 
+The P15 firmware and BIOS backup are the work of
+**[Nialpo](https://forums.truenas.com/u/nialpo)**, who captured and shared them on the
+[TrueNAS forums](https://forums.truenas.com/t/help-finding-updated-firmware-for-avago-sas3216-9305-16i-hba-card/62254).
+They are the known-good reference this whole project is validated against.
+
 ## SAS address
 
 Neither firmware image contains a SAS address — it lives in a separate flash region
