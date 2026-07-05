@@ -91,7 +91,10 @@ python3 build_3216_clone_fw.py --oracle --p15-base 16i_P15.bin --p15-backup clon
 
 - Made possible by a community-shared known-good clone P15 backup — paying the
   method forward.
-- "LSI", "Broadcom", "Avago", and the firmware are property of Broadcom Inc. This
-  project is **not affiliated with or endorsed by Broadcom**. It only modifies
-  firmware you legally obtain yourself; no firmware is distributed here.
-- Tool code: see [LICENSE](LICENSE).
+- "LSI", "Broadcom", and "Avago" and the firmware are property of Broadcom Inc. This
+  project is **not affiliated with or endorsed by Broadcom**. The build tool only
+  modifies firmware you supply yourself. The prebuilt images in [`firmware/`](firmware/)
+  are modified Broadcom firmware, shared for owners of out-of-production clone cards
+  that no official firmware supports; if Broadcom objects, they'll be removed and the
+  tool stands on its own. See [firmware/README.md](firmware/README.md).
+- Tool code (this repo's own scripts and docs): see [LICENSE](LICENSE).

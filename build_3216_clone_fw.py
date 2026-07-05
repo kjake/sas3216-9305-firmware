@@ -114,7 +114,7 @@ def run_oracle(p15_base, p15_backup):
     img[MYSTERY_OFF]=0x23
     for off,_,new in IDENTITY+P15_ONLY:
         img[off:off+len(new)//2]=bytes.fromhex(new)
-    st=record_starts(bytearray(bkp))
+    st=record_starts(img)          # boundaries from the buffer we're checksumming
     for r in REC_CKSUMS: fix_record_cksum(img,st,r)
     fix_balancer(img)
     ok = bytes(img)==bkp
@@ -163,4 +163,12 @@ if __name__=="__main__":
         if not (a.p15_base and a.p15_backup): sys.exit("--oracle needs --p15-base and --p15-backup")
         sys.exit(0 if run_oracle(a.p15_base,a.p15_backup) else 1)
     if not a.base: sys.exit("give --base <stock P16.12 9305-16i IT .bin>  (or --oracle ...)")
-    build(a.base,a.out,int(a.mystery,0))
+    try:
+        mystery=int(a.mystery,0)
+    except ValueError:
+        sys.exit(f"ERROR: --mystery {a.mystery!r} is not a number (try 0x24 or 0x05)")
+    if not 0<=mystery<=255: sys.exit("ERROR: --mystery must be a single byte (0x00–0xFF)")
+    try:
+        build(a.base,a.out,mystery)
+    except FileNotFoundError as e:
+        sys.exit(f"ERROR: cannot open {e.filename} — check the path to your stock P16.12 image")
