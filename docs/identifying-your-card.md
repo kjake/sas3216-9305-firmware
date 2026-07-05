@@ -38,13 +38,46 @@ Any other `1000:xxxx` is a different controller — this project doesn't apply.
 address). Capture this before and after flashing so you can see the change:
 
 ```
-<!-- paste your `sas3flash -list` output here -->
+Avago Technologies SAS3 Flash Utility
+Version 17.00.00.00 (2018.04.02)
+Copyright 2008-2018 Avago Technologies. All rights reserved.
+
+    Adapter Selected is a Avago SAS: SAS3216 (A1)
+
+    Controller Number              : 0
+    Controller                     : SAS3216 (A1)
+    PCI Address                    : 00:01:00:00
+    SAS Address                    : 500062B-0-0000-0000
+    NVDATA Version (Default)       : 10.00.00.24
+    NVDATA Version (Persistent)    : 10.00.00.24
+    Firmware Product ID            : 0x2228 (IT)
+    Firmware Version               : 16.00.12.00
+    NVDATA Vendor                  : LSI
+    NVDATA Product ID              : Avago SAS3216
+    BIOS Version                   : N/A
+    UEFI BSD Version               : N/A
+    FCODE Version                  : N/A
+    Board Name                     : SAS9305-16e
+    Board Assembly                 : N/A
+    Board Tracer Number            : N/A
+
+    Finished Processing Commands Successfully.
+    Exiting SASSFlash.
 ```
 
-Fields to check:
-- **Chip Name / Product ID** — SAS3216
-- **Board Name** — on a working clone with this firmware it reads `Avago SAS3216`
-- **Firmware Product ID / Version** — after flashing this project's image, P16.00.12.00
+Fields to check — the reliable ones:
+- **Controller** — `SAS3216`
+- **NVDATA Product ID** — `Avago SAS3216`
+- **Firmware Product ID** — `0x2228 (IT)` (confirms IT mode, not IR/RAID)
+- **Firmware Version** — `16.00.12.00` after flashing this project's image
+- **NVDATA Version** — ends in `.24` on this build (that last octet is the version
+  build byte the tool sets; see [analysis](analysis.md))
+
+Do **not** rely on the **Board Name** field. It's stored in a persistent region that
+a normal firmware flash doesn't overwrite, so it carries residue from whatever was
+flashed before. The card these docs were built from reads `SAS9305-16e` there — left
+over from an earlier 16e experiment — even though it's running the 16i-derived
+firmware. Cosmetic, and not an identity signal.
 
 **`dmesg`** — after flashing, the driver enumerates cleanly:
 

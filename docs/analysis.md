@@ -120,10 +120,10 @@ Between P15 and P16 Broadcom changed the PHY-descriptor format from `8000NN` to
 P16.12 requires **only the chip-identity change**. The hard part — translating a
 16-PHY internal map into a new descriptor format — was already done for me.
 
-## The one byte I couldn't prove
+## The one byte I couldn't place (until I could)
 
-One vendor/version byte in the manufacturing page (file offset `0x0E60FC`) changes
-across both chip and firmware version:
+One byte at `0x0E60FC` changes across both chip and firmware version, and for a while
+I couldn't tell what it was:
 
 ```
 0x04  stock 3224, P15
@@ -131,11 +131,22 @@ across both chip and firmware version:
 0x05  stock 3224, P16
 ```
 
-I couldn't find a checksum window that explained it, and there's no P16 3216-internal
-reference to copy from. The deltas are additive, though — `+0x01` for the version
-step, `+0x1F` for the chip step — so the P16 3216 value predicts to `0x24`. That's a
-model, not a proof. The tool defaults to `0x24` and exposes `--mystery 0x05` as the
-fallback. On real hardware, `0x24` works.
+No checksum window explained it, and there was no P16 3216-internal reference to copy
+from. The deltas are additive — `+0x01` for the version step, `+0x1F` for the chip
+step — so the P16 3216 value predicts to `0x24`. I shipped that as a guess with a
+`--mystery 0x05` fallback, and it worked on hardware.
+
+Then `sas3flash -list` on the flashed card named it:
+
+```
+NVDATA Version (Default)    : 10.00.00.24
+```
+
+That `.24` is the byte. `0x0E60FC` is the low octet of the NVDATA version field —
+`24 00 00 10`, which the tool reads back as `10.00.00.24`, major `0x10` matching the
+P16 firmware. It was never a checksum; it's a version build number. That's why no
+checksum math fit it, and why any sane value flashes and runs. The `0x24` guess turned
+out to be the internally-consistent version, so it stays the default.
 
 ## Proving it before flashing
 

@@ -46,11 +46,12 @@ sas3flash -o -sasadd 500600XXXXXXXXXX
 Don't copy someone else's SAS address onto your card if you'll ever share a SAS domain
 with them.
 
-## The one unproven byte
+## The NVDATA version byte
 
-The P16.12 build sets a single vendor byte to `0x24` (see [analysis](../docs/analysis.md)).
-It works on real hardware, but it's a model, not a proof. If your card flashes but
-ports don't enumerate, rebuild with the fallback and flash that instead:
+The P16.12 build sets one byte (`--mystery`, default `0x24`) that turned out to be the
+low octet of the NVDATA version — `sas3flash -list` reports `NVDATA Version 10.00.00.24`
+(see [analysis](../docs/analysis.md)). It's informational, not a checksum, so it's
+low-risk. If you ever want the P16-stock value instead, rebuild with the fallback:
 
 ```
 python3 ../build_3216_clone_fw.py --base <your stock P16.12>.bin --out clone_m05.bin --mystery 0x05

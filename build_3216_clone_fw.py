@@ -83,8 +83,10 @@ P15_ONLY = [
     (0x0E71D0,"08090b0a","12131110"),(0x0E71F8,"0c0d0f0e","16171514"),
     (0x0E8396,"00","08"),
 ]
-MYSTERY_OFF = 0x0E60FC        # vendor/version byte; P15 clone=0x23, P16 stock=0x05
-MYSTERY_P16_DEFAULT = 0x24    # linear model (0x04 base +0x01 ver +0x1F chip); hw-validated
+MYSTERY_OFF = 0x0E60FC        # low octet of the NVDATA version field (sas3flash shows
+                              # "NVDATA Version 10.00.00.24"). Informational, not a
+                              # checksum. P15 clone=0x23, P16 stock=0x05.
+MYSTERY_P16_DEFAULT = 0x24    # keeps the version consistent with the P16 firmware major
 REC_CKSUMS = [0x0E6539,0x0E6691,0x0E6C35,0x0E70D9,0x0E7759,0x0E8341,0x0E83DD]
 
 def u32(b,o): return struct.unpack_from("<I",b,o)[0]
