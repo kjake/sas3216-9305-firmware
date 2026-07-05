@@ -17,11 +17,22 @@ card than what arrived — close, but not the same sticker. Treat the photos as 
 
 ## The definitive check: software identity
 
-**`lspci`** — the chip reports itself. You want SAS3216, not SAS3224 or SAS3008:
+**`lspci -nn`** — the clearest single check. You want **SAS3216** and PCI ID
+**`[1000:00c9]`**:
 
 ```
-01:00.0 Serial Attached SCSI controller: Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3 (rev 01)
+01:00.0 Serial Attached SCSI controller [0107]: Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3 [1000:00c9] (rev 01)
 ```
+
+The device ID is the tell. It's programmed by the firmware's NVDATA, and it's the
+same on the P15 and P16.12 clone firmware:
+
+| PCI ID | Chip | Card |
+|---|---|---|
+| `[1000:00c9]` | SAS3216 | **this clone** |
+| `[1000:00c4]` | SAS3224 | genuine 9305-16i |
+
+Any other `1000:xxxx` is a different controller — this project doesn't apply.
 
 **`sas3flash -list`** — the firmware's own view (board name, chip, version, SAS
 address). Capture this before and after flashing so you can see the change:
