@@ -48,13 +48,13 @@ with them.
 
 ## The NVDATA version byte
 
-The P16.12 build sets one byte (`--mystery`, default `0x24`) that turned out to be the
-low octet of the NVDATA version — `sas3flash -list` reports `NVDATA Version 10.00.00.24`
+The P16.12 build sets one byte (`--nvdata-build`, default `0x24`) that is the low octet
+of the NVDATA version — `sas3flash -list` reports `NVDATA Version 10.00.00.24`
 (see [analysis](../docs/analysis.md)). It's informational, not a checksum, so it's
 low-risk. If you ever want the P16-stock value instead, rebuild with the fallback:
 
 ```
-python3 ../build_3216_clone_fw.py --base <your stock P16.12>.bin --out clone_m05.bin --mystery 0x05
+python3 ../build_3216_clone_fw.py --base <your stock P16.12>.bin --out clone_m05.bin --nvdata-build 0x05
 ```
 
 ## Copyright

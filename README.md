@@ -80,10 +80,10 @@ python3 build_3216_clone_fw.py --oracle --p15-base 16i_P15.bin --p15-backup clon
 
 - **`phys(24)` in dmesg is cosmetic.** The firmware advertises 24 PHY slots
   (inherited from the 16i/3224 base NVDATA); only your 16 wired PHYs enumerate.
-- **The `--mystery` byte is the NVDATA version build number** (`sas3flash -list`
-  reports `NVDATA Version 10.00.00.24` on this build). It's informational, not a
-  checksum, so the value is low-risk; the default `0x24` matches the P16 firmware
-  major. `--mystery 0x05` (P16 stock) is available as a fallback.
+- **`--nvdata-build` sets the NVDATA version build byte** (`sas3flash -list` reports
+  `NVDATA Version 10.00.00.24` on this build). It's informational, not a checksum, so
+  the value is low-risk; the default `0x24` matches the P16 firmware major.
+  `--nvdata-build 0x05` (P16 stock) is available as a fallback.
 - Validated for the **P16.12** IT base only. Other P-releases would need the
   offsets re-derived; PRs welcome.
 

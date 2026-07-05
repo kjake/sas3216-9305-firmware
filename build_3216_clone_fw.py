@@ -83,10 +83,10 @@ P15_ONLY = [
     (0x0E71D0,"08090b0a","12131110"),(0x0E71F8,"0c0d0f0e","16171514"),
     (0x0E8396,"00","08"),
 ]
-MYSTERY_OFF = 0x0E60FC        # low octet of the NVDATA version field (sas3flash shows
-                              # "NVDATA Version 10.00.00.24"). Informational, not a
-                              # checksum. P15 clone=0x23, P16 stock=0x05.
-MYSTERY_P16_DEFAULT = 0x24    # keeps the version consistent with the P16 firmware major
+NVDATA_BUILD_OFF = 0x0E60FC       # low octet of the NVDATA version field (sas3flash
+                                  # shows "NVDATA Version 10.00.00.24"). Informational,
+                                  # not a checksum. P15 clone=0x23, P16 stock=0x05.
+NVDATA_BUILD_DEFAULT = 0x24       # keeps the version consistent with the P16 firmware major
 REC_CKSUMS = [0x0E6539,0x0E6691,0x0E6C35,0x0E70D9,0x0E7759,0x0E8341,0x0E83DD]
 
 def u32(b,o): return struct.unpack_from("<I",b,o)[0]
@@ -111,7 +111,7 @@ def fix_balancer(b):
 def run_oracle(p15_base, p15_backup):
     o15=bytearray(open(p15_base,'rb').read()); bkp=open(p15_backup,'rb').read()
     img=bytearray(o15)
-    img[MYSTERY_OFF]=0x23
+    img[NVDATA_BUILD_OFF]=0x23
     for off,_,new in IDENTITY+P15_ONLY:
         img[off:off+len(new)//2]=bytes.fromhex(new)
     st=record_starts(img)          # boundaries from the buffer we're checksumming
@@ -121,7 +121,7 @@ def run_oracle(p15_base, p15_backup):
     print(f"[oracle] regenerate known-good clone from P15 base: {'PASS (byte-identical)' if ok else 'FAIL'}")
     return ok
 
-def build(base_p16, out, mystery):
+def build(base_p16, out, nvdata_build):
     b=bytearray(open(base_p16,'rb').read())
     # This tool is tested ONLY on the 9305-16i P16.12 IT base. Refuse anything else.
     if u32(b,0x14)!=0x10000c00:
@@ -137,7 +137,7 @@ def build(base_p16, out, mystery):
             sys.exit(f"ERROR: base mismatch at 0x{p:06x}: got {cur.hex()} expected {exp}. "
                      f"Base is not the expected stock P16.12 9305-16i IT image.")
         b[p:p+len(new)//2]=bytes.fromhex(new)
-    b[MYSTERY_OFF+SHIFT]=mystery
+    b[NVDATA_BUILD_OFF+SHIFT]=nvdata_build
     st=record_starts(b)
     for r in REC_CKSUMS: fix_record_cksum(b,st,r+SHIFT)
     fix_balancer(b)
@@ -146,7 +146,7 @@ def build(base_p16, out, mystery):
     for o in range(n,len(b),4): tot=(tot+u32(b,o))&0xFFFFFFFF
     chips=sorted(set(x.decode() for x in re.findall(rb"LSISAS32\d\d",bytes(b))))
     print(f"[build] wrote {out}  size={len(b)}  md5={hashlib.md5(b).hexdigest()}")
-    print(f"[build] chip id: {chips}   NVDATA u32-sum: {tot:#x} (want 0x0)   mystery byte: {mystery:#04x}")
+    print(f"[build] chip id: {chips}   NVDATA u32-sum: {tot:#x} (want 0x0)   nvdata-build byte: {nvdata_build:#04x}")
     if chips!=["LSISAS3216"] or tot!=0: sys.exit("ERROR: post-build sanity failed")
     print("[build] OK — flash on a THROWAWAY box first; see docs/flash-test.md")
 
@@ -154,8 +154,9 @@ if __name__=="__main__":
     ap=argparse.ArgumentParser(description="Retarget 9305-16i P16.12 IT firmware for SAS3216 clones")
     ap.add_argument("--base",help="stock Broadcom 9305-16i P16.12 IT image (.bin)")
     ap.add_argument("--out",default="SAS9305-16i_P16.12_SAS3216clone.bin")
-    ap.add_argument("--mystery",default=hex(MYSTERY_P16_DEFAULT),
-                    help="vendor byte value (default 0x24; fallback 0x05 if the card misbehaves)")
+    ap.add_argument("--nvdata-build",default=hex(NVDATA_BUILD_DEFAULT),
+                    help="NVDATA version build byte (default 0x24; 0x05 = P16 stock, "
+                         "as a fallback if the card misbehaves)")
     ap.add_argument("--oracle",action="store_true",help="verify pipeline against P15 reference files")
     ap.add_argument("--p15-base"); ap.add_argument("--p15-backup")
     a=ap.parse_args()
@@ -164,11 +165,11 @@ if __name__=="__main__":
         sys.exit(0 if run_oracle(a.p15_base,a.p15_backup) else 1)
     if not a.base: sys.exit("give --base <stock P16.12 9305-16i IT .bin>  (or --oracle ...)")
     try:
-        mystery=int(a.mystery,0)
+        nvdata_build=int(a.nvdata_build,0)
     except ValueError:
-        sys.exit(f"ERROR: --mystery {a.mystery!r} is not a number (try 0x24 or 0x05)")
-    if not 0<=mystery<=255: sys.exit("ERROR: --mystery must be a single byte (0x00–0xFF)")
+        sys.exit(f"ERROR: --nvdata-build {a.nvdata_build!r} is not a number (try 0x24 or 0x05)")
+    if not 0<=nvdata_build<=255: sys.exit("ERROR: --nvdata-build must be a single byte (0x00–0xFF)")
     try:
-        build(a.base,a.out,mystery)
+        build(a.base,a.out,nvdata_build)
     except FileNotFoundError as e:
         sys.exit(f"ERROR: cannot open {e.filename} — check the path to your stock P16.12 image")

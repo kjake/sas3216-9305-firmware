@@ -134,7 +134,7 @@ I couldn't tell what it was:
 No checksum window explained it, and there was no P16 3216-internal reference to copy
 from. The deltas are additive — `+0x01` for the version step, `+0x1F` for the chip
 step — so the P16 3216 value predicts to `0x24`. I shipped that as a guess with a
-`--mystery 0x05` fallback, and it worked on hardware.
+`--nvdata-build 0x05` fallback, and it worked on hardware.
 
 Then `sas3flash -list` on the flashed card named it:
 

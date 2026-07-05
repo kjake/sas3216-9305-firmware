@@ -137,10 +137,10 @@ for d in sdX sdY sdZ; do smartctl -l sasphy /dev/$d | grep -iE "invalid dword|di
 ## If it fails
 
 **Ports don't enumerate, or PHY errors.** Your card may need the fallback value for
-the one unproven vendor byte. Rebuild with `--mystery 0x05` and reflash:
+the one unproven vendor byte. Rebuild with `--nvdata-build 0x05` and reflash:
 
 ```
-python3 build_3216_clone_fw.py --base <stock-P16.12>.bin --out clone_m05.bin --mystery 0x05
+python3 build_3216_clone_fw.py --base <stock-P16.12>.bin --out clone_m05.bin --nvdata-build 0x05
 ```
 
 **Won't POST at all.** Restore the backup you took in pre-flight:
