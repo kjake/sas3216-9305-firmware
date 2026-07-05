@@ -1,0 +1,17 @@
+# Ignore stray firmware images by default (don't accidentally commit a build or a
+# base image you were handed). The curated release binaries under firmware/ are
+# force-included below.
+*.bin
+*.fw
+*.rom
+*.dat
+*.ROM
+
+# ...but DO ship the curated release binaries in firmware/
+!firmware/
+!firmware/**
+
+# Python
+__pycache__/
+*.pyc
+.venv/
