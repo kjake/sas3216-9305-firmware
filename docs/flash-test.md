@@ -41,7 +41,15 @@ Power the machine fully off, then on — not a warm reboot.
 
 ### Erase levels (and the SAS-address trap)
 
-Two erase levels behave differently, and the difference bites people:
+**Upgrading a card that already works?** Use `-e 6` (or just `-f`). What makes the
+clone work — chip identity and the PHY map — lives in the firmware image, so replacing
+the firmware is all you need. `-e 6` keeps your SAS address and board identity, so
+there's no re-set afterward. This is the common case and the safe one.
+
+Reach for `-e 7` only for a first-time conversion, a recovery, or to fix a Board Name
+that's stuck on a stale value — and know it costs you the SAS address.
+
+Two erase levels, and the difference bites people:
 
 - **`sas3flash -o -e 6`** — clears the firmware regions but **keeps** the manufacturing
   area: your SAS address and board identity survive. This is the normal pre-flash erase.
