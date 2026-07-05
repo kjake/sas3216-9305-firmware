@@ -57,7 +57,7 @@ Copyright 2008-2018 Avago Technologies. All rights reserved.
     BIOS Version                   : N/A
     UEFI BSD Version               : N/A
     FCODE Version                  : N/A
-    Board Name                     : SAS9305-16e
+    Board Name                     : Avago SAS3216
     Board Assembly                 : N/A
     Board Tracer Number            : N/A
 
@@ -73,11 +73,14 @@ Fields to check — the reliable ones:
 - **NVDATA Version** — ends in `.24` on this build (that last octet is the version
   build byte the tool sets; see [analysis](analysis.md))
 
-Do **not** rely on the **Board Name** field. It's stored in a persistent region that
-a normal firmware flash doesn't overwrite, so it carries residue from whatever was
-flashed before. The card these docs were built from reads `SAS9305-16e` there — left
-over from an earlier 16e experiment — even though it's running the 16i-derived
-firmware. Cosmetic, and not an identity signal.
+Treat the **Board Name** field with care. It lives in the card's persistent
+manufacturing region, and a normal flash doesn't overwrite it — the firmware's board
+name only takes effect if you do a full erase (`sas3flash -o -e 7`) first. So it's
+correct after a clean flash (the output above reads `Avago SAS3216`), but on a card
+flashed without a full erase it can show a stale value from whatever ran before. A
+full erase also wipes the SAS address, so record yours first — see the
+[flashing guide](flash-test.md). For identification, lean on the erase-independent
+fields — Controller, NVDATA Product ID, PCI ID.
 
 **`dmesg`** — after flashing, the driver enumerates cleanly:
 

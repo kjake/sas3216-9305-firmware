@@ -39,6 +39,24 @@ sas3flash -o -reset
 
 Power the machine fully off, then on — not a warm reboot.
 
+### Erase levels (and the SAS-address trap)
+
+Two erase levels behave differently, and the difference bites people:
+
+- **`sas3flash -o -e 6`** — clears the firmware regions but **keeps** the manufacturing
+  area: your SAS address and board identity survive. This is the normal pre-flash erase.
+- **`sas3flash -o -e 7`** — wipes **everything**, including the manufacturing region.
+  Use it if the reported **Board Name** is stuck on a stale value from a previous flash
+  (a plain `-f` won't change it). But `-e 7` also **erases your SAS address**.
+
+> **Record your SAS address before an `-e 7`.** It's on the sticker on the back of the
+> card, and in `sas3flash -list`. After the erase-and-flash, set it back:
+> ```
+> sas3flash -o -sasadd <SASADDR>
+> ```
+> A zeroed or duplicated SAS address causes conflicts if the card ever shares a SAS
+> domain with another. Don't skip this.
+
 ## Verify
 
 Go in order. Stop and roll back if any step fails.
