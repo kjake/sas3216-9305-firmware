@@ -1,10 +1,12 @@
 # sas3216-9305-firmware
 
-Retarget stock **Broadcom/LSI 9305-16i IT firmware (P16.12)** so it runs on a
-**"fake" 9305-16i built on SAS3216 silicon** with internal SFF-8643 connectors.
+Retarget stock Broadcom 9305-16i IT firmware (P16.12) so it runs on a **SAS3216
+clone** — a "9305-16i" built on cheaper 16-port silicon instead of the SAS3224 the
+real card uses.
 
-Some inexpensive "9305-16i" HBAs use a **SAS3216** ROC (16-port) instead of the
-genuine **SAS3224** (24-port). Stock firmware bricks them:
+These clones pair a SAS3216 ROC with a 9305-16i board and internal SFF-8643
+connectors, a combination no official firmware package targets. So every stock image
+bricks them:
 
 | Firmware | Chip | Connectors | Result on the SAS3216 clone |
 |---|---|---|---|
@@ -12,8 +14,8 @@ genuine **SAS3224** (24-port). Stock firmware bricks them:
 | Stock 9305-16e | SAS3216 | external | ❌ wrong PHY map → ports never enumerate (boot hangs on port-enable) |
 | **This tool's output** | **SAS3216** | **internal** | ✅ POSTs, all internal ports enumerate |
 
-The clone needs a combination no official package ships: **SAS3216 chip identity +
-the 16i internal PHY map.** This tool produces exactly that from a stock P16.12 image.
+What works is **SAS3216 chip identity paired with the 16i internal PHY map** — and
+that's exactly what this tool writes into a stock P16.12 image.
 
 **First: [is your card one of these?](docs/identifying-your-card.md)** — photos and the
 `lspci`/`sas3flash` checks to confirm before you flash.
@@ -26,11 +28,11 @@ the 16i internal PHY map.** This tool produces exactly that from a stock P16.12 
 >   and **will not work** with this image.
 > - No warranty. You are responsible for your hardware. See [flashing guide](docs/flash-test.md).
 
-## Why it's trustworthy
+## How it's validated
 
-The firmware format (NVDATA config records, per-record checksums, and the image
-balancer) was fully reverse-engineered — see [docs/analysis.md](docs/analysis.md).
-The build pipeline is validated two ways:
+The firmware format — NVDATA config records, per-record checksums, and the image
+balancer — is reverse-engineered in [docs/analysis.md](docs/analysis.md). The build
+pipeline is checked two ways:
 
 1. **Oracle (byte-for-byte):** the same transform + checksum logic regenerates a
    *known-good clone P15 backup* from stock 9305-16i P15 firmware, byte-identical.
