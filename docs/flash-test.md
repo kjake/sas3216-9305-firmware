@@ -39,6 +39,26 @@ sas3flash -o -reset
 
 Power the machine fully off, then on — not a warm reboot.
 
+### The option ROM (why `BIOS Version` reads N/A)
+
+We flash firmware only — no `-b` — so `sas3flash -list` shows **`BIOS Version: N/A`**,
+and the same for `UEFI BSD Version` and `FCODE Version`. That's expected and correct
+for an IT-mode storage HBA. The option ROM is a pre-boot driver you only need if you
+**boot the operating system from a drive on this card**. In a NAS (boot from USB, SATA,
+or NVMe; the HBA just presents data disks) it does nothing but slow POST — and on some
+clones, cause the boot hang.
+
+If you *do* need boot-from-HBA, flash an option ROM alongside the firmware. The stock
+P16.12 package ships both:
+
+```
+sas3flash -o -f SAS9305-16i_P16.12_SAS3216clone.bin -b mpt3x64.rom     # UEFI
+sas3flash -o -f SAS9305-16i_P16.12_SAS3216clone.bin -b mptsas3.rom     # legacy/CSM
+```
+
+A clean erase clears the option ROM region, and a firmware-only flash won't restore it,
+so you'll need to re-add it after any upgrade.
+
 ### Erase levels (and the SAS-address trap)
 
 **Upgrading a card that already works?** Use `-e 6` (or just `-f`). What makes the

@@ -73,6 +73,10 @@ Fields to check — the reliable ones:
 - **NVDATA Version** — ends in `.24` on this build (that last octet is the version
   build byte the tool sets; see [analysis](analysis.md))
 
+`BIOS Version`, `UEFI BSD Version`, and `FCODE Version` reading **N/A** is normal — we
+flash firmware without an option ROM, which is the right call for an IT-mode storage
+HBA. See the [flashing guide](flash-test.md) if you actually boot from the card.
+
 Treat the **Board Name** field with care. It lives in the card's persistent
 manufacturing region, and a normal flash doesn't overwrite it — the firmware's board
 name only takes effect if you do a full erase (`sas3flash -o -e 7`) first. So it's
