@@ -15,6 +15,9 @@ genuine **SAS3224** (24-port). Stock firmware bricks them:
 The clone needs a combination no official package ships: **SAS3216 chip identity +
 the 16i internal PHY map.** This tool produces exactly that from a stock P16.12 image.
 
+**First: [is your card one of these?](docs/identifying-your-card.md)** — photos and the
+`lspci`/`sas3flash` checks to confirm before you flash.
+
 > ### ⚠️ This can brick your card if misused.
 > - Flashing firmware is inherently risky. **Test on a throwaway machine first.**
 > - **Back up your card's current firmware, BIOS, and SAS address** before flashing.

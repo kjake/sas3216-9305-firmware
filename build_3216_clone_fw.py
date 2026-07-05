@@ -4,6 +4,15 @@ build_3216_clone_fw.py
 Retarget stock Broadcom/LSI 9305-16i IT firmware (P16.12) so it runs on a
 "fake"/clone 9305-16i built on SAS3216 silicon with internal SFF-8643 connectors.
 
+TESTED FIRMWARE VERSIONS (this is the whole supported matrix)
+  * BUILD   : 9305-16i **P16.12** IT only. The tool reads the version field and
+              REFUSES any other base image, so you cannot accidentally build from
+              an untested release.
+  * ORACLE  : validates the transform against 9305-16i **P15** IT + a known-good
+              P15 clone backup.
+  No other P-releases are tested. Adapting to a different one means re-deriving the
+  NVDATA offsets in this file (see docs/analysis.md); PRs welcome.
+
 WHAT / WHY
   Some cheap "9305-16i" cards use a SAS3216 ROC (16-port) instead of the genuine
   SAS3224 (24-port). Stock 9305-16i firmware declares SAS3224 + a 24-PHY map and
@@ -112,11 +121,13 @@ def run_oracle(p15_base, p15_backup):
 
 def build(base_p16, out, mystery):
     b=bytearray(open(base_p16,'rb').read())
-    # sanity: is this a P16.12 9305-16i IT image?
+    # This tool is tested ONLY on the 9305-16i P16.12 IT base. Refuse anything else.
     if u32(b,0x14)!=0x10000c00:
-        sys.exit("ERROR: base FW version != P16.12 (0x14 != 000c0010). Wrong/incompatible image.")
+        sys.exit("ERROR: base is not 9305-16i P16.12 (version field 0x14 != 000c0010).\n"
+                 "       This tool only supports the P16.12 IT base. See 'TESTED FIRMWARE\n"
+                 "       VERSIONS' at the top of this file for what's supported and why.")
     if b"LSISAS3224" not in bytes(b):
-        sys.exit("ERROR: base does not contain 'LSISAS3224' — not a stock 9305-16i image.")
+        sys.exit("ERROR: base does not contain 'LSISAS3224' — not a stock 9305-16i IT image.")
     # verify + patch identity fields at P16 offsets
     for off,exp,new in IDENTITY:
         p=off+SHIFT; cur=bytes(b[p:p+len(exp)//2])
