@@ -86,6 +86,51 @@ full erase also wipes the SAS address, so record yours first — see the
 [flashing guide](flash-test.md). For identification, lean on the erase-independent
 fields — Controller, NVDATA Product ID, PCI ID.
 
+### P15 stock vs this P16.12 build
+
+What the upgrade changes, from `sas3flash -list` before and after:
+
+| Field | P15 (stock clone) | P16.12 (this build) |
+|---|---|---|
+| Firmware Version | `15.00.00.00` | `16.00.12.00` |
+| NVDATA Version | `0b.04.00.23` | `10.00.00.24` |
+| Firmware Product ID | `0x2228 (IT)` | `0x2228 (IT)` |
+| Controller | `SAS3216 (A1)` | `SAS3216 (A1)` |
+| NVDATA Product ID | `Avago SAS3216` | `Avago SAS3216` |
+| Board Name | `Avago SAS3216` | `Avago SAS3216` |
+| BIOS Version | `08.35.00.00` | `N/A` |
+| UEFI BSD Version | `17.00.00.00` | `N/A` |
+
+Three things to read out of that:
+
+- **NVDATA Version `…23` → `…24`.** That last octet is the version build byte the tool
+  writes (`0x23` on the P15 clone, `0x24` here). The whole version also steps with the
+  firmware major (`0b` → `10`). This is the card confirming what the
+  [analysis](analysis.md) worked out at the byte level.
+- **BIOS/UEFI present → `N/A`.** The stock P15 image carried an option ROM; this build
+  is firmware-only. Expected — see the [flashing guide](flash-test.md).
+- **Identity holds.** Controller, Firmware Product ID, NVDATA Product ID, and Board Name
+  are unchanged. Same card, newer firmware.
+
+<details><summary>Full P15 stock <code>sas3flash -list</code></summary>
+
+```
+    Controller                     : SAS3216 (A1)
+    PCI Address                    : 00:01:00:00
+    SAS Address                    : 500062B-0-0000-0000
+    NVDATA Version (Default)       : 0b.04.00.23
+    NVDATA Version (Persistent)    : 0b.04.00.23
+    Firmware Product ID            : 0x2228 (IT)
+    Firmware Version               : 15.00.00.00
+    NVDATA Vendor                  : LSI
+    NVDATA Product ID              : Avago SAS3216
+    BIOS Version                   : 08.35.00.00
+    UEFI BSD Version               : 17.00.00.00
+    FCODE Version                  : N/A
+    Board Name                     : Avago SAS3216
+```
+</details>
+
 **`dmesg`** — after flashing, the driver enumerates cleanly:
 
 ```
