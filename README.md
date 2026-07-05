@@ -1,7 +1,7 @@
 # sas3216-9305-firmware
 
 Retarget stock Broadcom 9305-16i IT firmware (P16.12) so it runs on a **SAS3216
-clone** — a "9305-16i" built on cheaper 16-port silicon instead of the SAS3224 the
+clone**: a "9305-16i" built on cheaper 16-port silicon instead of the SAS3224 the
 real card uses.
 
 These clones pair a SAS3216 ROC with a 9305-16i board and internal SFF-8643
@@ -14,11 +14,11 @@ bricks them:
 | Stock 9305-16e | SAS3216 | external | ❌ wrong PHY map → ports never enumerate (boot hangs on port-enable) |
 | **This tool's output** | **SAS3216** | **internal** | ✅ POSTs, all internal ports enumerate |
 
-What works is **SAS3216 chip identity paired with the 16i internal PHY map** — and
+What works is **SAS3216 chip identity paired with the 16i internal PHY map**, and
 that's exactly what this tool writes into a stock P16.12 image.
 
-**First: [is your card one of these?](docs/identifying-your-card.md)** — photos and the
-`lspci`/`sas3flash` checks to confirm before you flash.
+**First, [is your card one of these?](docs/identifying-your-card.md)** Photos and the
+`lspci`/`sas3flash` checks confirm it before you flash.
 
 > ### ⚠️ This can brick your card if misused.
 > - Flashing firmware is inherently risky. **Test on a throwaway machine first.**
@@ -30,19 +30,19 @@ that's exactly what this tool writes into a stock P16.12 image.
 
 ## How it's validated
 
-The firmware format — NVDATA config records, per-record checksums, and the image
-balancer — is reverse-engineered in [docs/analysis.md](docs/analysis.md). The build
+The firmware format (NVDATA config records, per-record checksums, and the image
+balancer) is reverse-engineered in [docs/analysis.md](docs/analysis.md). The build
 pipeline is checked two ways:
 
 1. **Oracle (byte-for-byte):** the same transform + checksum logic regenerates a
    *known-good clone P15 backup* from stock 9305-16i P15 firmware, byte-identical.
 2. **Real hardware:** the P16.12 output was flashed to a SAS3216 clone (HP Z220,
-   unRAID 7.2.3) — POST clean, all internal ports enumerate, and an overnight
+   unRAID 7.2.3). POST clean, all internal ports enumerate, and an overnight
    ~660 MB/s all-PHY read soak produced **zero** mpt3sas/PHY/CRC errors.
 
 ## Requirements
 
-- Python 3 (standard library only — no dependencies)
+- Python 3 (standard library only, no dependencies)
 - To **build** your own: a stock Broadcom **9305-16i P16.12 IT** firmware image
   (`SAS9305_16i_IT_P.bin`), from Broadcom's support site.
 - To **skip building**: a prebuilt image is in [`firmware/`](firmware/) (see caveats).
@@ -65,7 +65,7 @@ boot hang some clones show with the BIOS enabled).
 
 [`firmware/`](firmware/) has the hardware-validated P16.12 image plus a known-good P15
 rescue image, with checksums and the same warnings. Read
-[firmware/README.md](firmware/README.md) first — same rule applies: test on a
+[firmware/README.md](firmware/README.md) first; same rule applies: test on a
 disposable machine, back up your card first.
 
 ### Optional: prove the pipeline yourself
@@ -93,7 +93,7 @@ python3 build_3216_clone_fw.py --oracle --p15-base 16i_P15.bin --p15-backup clon
 
 - This project exists because **[Nialpo](https://forums.truenas.com/u/nialpo)** made
   and shared a firmware + BIOS backup of a working SAS3216 clone. That backup is the
-  known-good P15 reference the whole build validates against, byte for byte — no
+  known-good P15 reference the whole build validates against, byte for byte. No
   backup, no oracle, no project. Thank you. The discussion that started it:
   [TrueNAS forums](https://forums.truenas.com/t/help-finding-updated-firmware-for-avago-sas3216-9305-16i-hba-card/62254).
 - "LSI", "Broadcom", and "Avago" and the firmware are property of Broadcom Inc. This

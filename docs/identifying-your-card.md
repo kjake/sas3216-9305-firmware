@@ -2,7 +2,7 @@
 
 This project only helps one specific card: a **SAS3216** ROC on a **9305-16i-style
 board with internal SFF-8643 connectors**. Before you flash anything, confirm that's
-what you have. The software identity is what matters — photos vary between batches.
+what you have. The software identity is what matters; photos vary between batches.
 
 ## What mine looks like
 
@@ -12,12 +12,12 @@ what you have. The software identity is what matters — photos vary between bat
 
 The tell on this batch is the **full-Chinese sticker on the front**. I haven't seen
 it on any photo of a genuine 9305-16i. The eBay listing used a more legit-looking
-card than what arrived — close, but not the same sticker. Treat the photos as a
+card than what arrived; close, but not the same sticker. Treat the photos as a
 "probably" signal, not proof. Confirm in software.
 
-## The definitive check: software identity
+## Definitive check: software identity
 
-**`lspci -nn`** — the clearest single check. You want **SAS3216** and PCI ID
+**`lspci -nn`** is the clearest single check. You want **SAS3216** and PCI ID
 **`[1000:00c9]`**:
 
 ```
@@ -32,10 +32,10 @@ same on the P15 and P16.12 clone firmware:
 | `[1000:00c9]` | SAS3216 | **this clone** |
 | `[1000:00c4]` | SAS3224 | genuine 9305-16i |
 
-Any other `1000:xxxx` is a different controller — this project doesn't apply.
+Any other `1000:xxxx` is a different controller; this project doesn't apply.
 
-**`sas3flash -list`** — the firmware's own view (board name, chip, version, SAS
-address). Capture this before and after flashing so you can see the change:
+**`sas3flash -list`** shows the firmware's own view (board name, chip, version, SAS
+address). Capture it before and after flashing so you can see the change:
 
 ```
 Avago Technologies SAS3 Flash Utility
@@ -65,26 +65,26 @@ Copyright 2008-2018 Avago Technologies. All rights reserved.
     Exiting SASSFlash.
 ```
 
-Fields to check — the reliable ones:
-- **Controller** — `SAS3216`
-- **NVDATA Product ID** — `Avago SAS3216`
-- **Firmware Product ID** — `0x2228 (IT)` (confirms IT mode, not IR/RAID)
-- **Firmware Version** — `16.00.12.00` after flashing this project's image
-- **NVDATA Version** — ends in `.24` on this build (that last octet is the version
+Fields to check, the reliable ones:
+- **Controller**: `SAS3216`
+- **NVDATA Product ID**: `Avago SAS3216`
+- **Firmware Product ID**: `0x2228 (IT)` (confirms IT mode, not IR/RAID)
+- **Firmware Version**: `16.00.12.00` after flashing this project's image
+- **NVDATA Version**: ends in `.24` on this build (that last octet is the version
   build byte the tool sets; see [analysis](analysis.md))
 
-`BIOS Version`, `UEFI BSD Version`, and `FCODE Version` reading **N/A** is normal — we
+`BIOS Version`, `UEFI BSD Version`, and `FCODE Version` reading **N/A** is normal; we
 flash firmware without an option ROM, which is the right call for an IT-mode storage
 HBA. See the [flashing guide](flash-test.md) if you actually boot from the card.
 
 Treat the **Board Name** field with care. It lives in the card's persistent
-manufacturing region, and a normal flash doesn't overwrite it — the firmware's board
+manufacturing region, and a normal flash doesn't overwrite it; the firmware's board
 name only takes effect if you do a full erase (`sas3flash -o -e 7`) first. So it's
 correct after a clean flash (the output above reads `Avago SAS3216`), but on a card
 flashed without a full erase it can show a stale value from whatever ran before. A
-full erase also wipes the SAS address, so record yours first — see the
+full erase also wipes the SAS address, so record yours first; see the
 [flashing guide](flash-test.md). For identification, lean on the erase-independent
-fields — Controller, NVDATA Product ID, PCI ID.
+fields: Controller, NVDATA Product ID, PCI ID.
 
 ### P15 stock vs this P16.12 build
 
@@ -108,7 +108,7 @@ Three things to read out of that:
   firmware major (`0b` → `10`). This is the card confirming what the
   [analysis](analysis.md) worked out at the byte level.
 - **BIOS/UEFI present → `N/A`.** The stock P15 image carried an option ROM; this build
-  is firmware-only. Expected — see the [flashing guide](flash-test.md).
+  is firmware-only. Expected; see the [flashing guide](flash-test.md).
 - **Identity holds.** Controller, Firmware Product ID, NVDATA Product ID, and Board Name
   are unchanged. Same card, newer firmware.
 
@@ -131,14 +131,14 @@ Three things to read out of that:
 ```
 </details>
 
-**`dmesg`** — after flashing, the driver enumerates cleanly:
+After flashing, `dmesg` shows the driver enumerating cleanly:
 
 ```
 mpt3sas_cm0: host_add: handle(0x0001), sas_addr(0x5.....), phys(24)
 mpt3sas_cm0: port enable: SUCCESS
 ```
 
-`phys(24)` is expected and cosmetic — the firmware advertises 24 PHY slots from the
+`phys(24)` is expected and cosmetic; the firmware advertises 24 PHY slots from the
 16i base NVDATA, but only your 16 wired PHYs enumerate.
 
 ## If your card is different
@@ -146,7 +146,7 @@ mpt3sas_cm0: port enable: SUCCESS
 - **SAS3224** reported in `lspci` → you have a genuine 9305-16i (or 16i clone that
   already runs stock firmware). You don't need this.
 - **External SFF-8644 connectors** → different PHY wiring. This image will flash but
-  the ports won't enumerate. You'd need to derive your own NVDATA — the
+  the ports won't enumerate. You'd need to derive your own NVDATA; the
   [analysis](analysis.md) and the build tool show how.
 - **SAS3008** or anything else → wrong controller entirely; nothing here applies.
 

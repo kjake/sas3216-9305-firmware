@@ -168,7 +168,7 @@ if __name__=="__main__":
         nvdata_build=int(a.nvdata_build,0)
     except ValueError:
         sys.exit(f"ERROR: --nvdata-build {a.nvdata_build!r} is not a number (try 0x24 or 0x05)")
-    if not 0<=nvdata_build<=255: sys.exit("ERROR: --nvdata-build must be a single byte (0x00–0xFF)")
+    if not 0<=nvdata_build<=255: sys.exit("ERROR: --nvdata-build must be a single byte (0x00 to 0xFF)")
     try:
         build(a.base,a.out,nvdata_build)
     except FileNotFoundError as e:
